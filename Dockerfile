@@ -1,5 +1,5 @@
 FROM python:3.7-alpine3.11
-LABEL maintainer="Luke Childs <lukechilds123@gmail.com>"
+LABEL maintainer="Caleb James DeLisle <cjd@cjdns.fr>"
 
 COPY ./bin /usr/local/bin
 COPY ./VERSION /tmp
@@ -10,7 +10,7 @@ RUN VERSION=$(cat /tmp/VERSION) && \
     apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.11/main leveldb-dev && \
     apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing rocksdb-dev && \
     pip install aiohttp pylru plyvel websockets python-rocksdb && \
-    git clone -b master https://github.com/spesmilo/electrumx.git && \
+    git clone https://github.com/cjdelisle/electrumx.git && \
     cd electrumx && \
     git checkout $VERSION && \
     python setup.py install && \
@@ -21,12 +21,19 @@ VOLUME ["/data"]
 ENV HOME /data
 ENV ALLOW_ROOT 1
 ENV DB_DIRECTORY /data
-ENV SERVICES=tcp://:50001,ssl://:50002,wss://:50004,rpc://0.0.0.0:8000
+ENV SERVICES=tcp://:64766,ssl://:64767,wss://:64719,rpc://0.0.0.0:8252
 ENV SSL_CERTFILE ${DB_DIRECTORY}/electrumx.crt
 ENV SSL_KEYFILE ${DB_DIRECTORY}/electrumx.key
+
+ENV COIN=PKT
+ENV DB_ENGINE=rocksdb
+ENV LOG_LEVEL=debug
+ENV PEER_ANNOUNCE=on
+ENV CACHE_MB=1000
+
 ENV HOST ""
 WORKDIR /data
 
-EXPOSE 50001 50002 50004 8000
+EXPOSE 64766 64767 64719 8252
 
 CMD ["init"]
