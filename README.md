@@ -74,5 +74,7 @@ If you're only accessing RPC from within the container, there's no need to expos
 
 ## License
 
-MIT © Luke Childs
-Caleb James DeLisle
+MIT License
+
+* © Luke Childs
+* Caleb James DeLisle
