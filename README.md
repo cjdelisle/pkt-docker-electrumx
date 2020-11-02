@@ -19,7 +19,9 @@ pktd --addrindex --txindex --notls --rpclisten=0.0.0.0 -u x -P x
 
 3. Make a data directory
 
+```
 mkdir $HOME/electrumx_data
+```
 
 4. Launch electrumx from docker:
 
