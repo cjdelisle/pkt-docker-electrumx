@@ -14,7 +14,7 @@ Check it out on dockerhub at [cjd1/pkt-electrumx](https://hub.docker.com/r/cjd1/
 2. Launch pktd with the following arguments:
 
 ```
-pktd --addrindex --txindex --notls --rpclisten=0.0.0.0 -u x -P x
+pktd --addrindex --txindex --notls --rpclisten=172.17.0.1 -u x -P x
 ```
 
 3. Make a data directory
@@ -26,11 +26,15 @@ mkdir $HOME/electrumx_data
 4. Launch electrumx from docker:
 
 ```
-HOST_IP=$(ip route|awk '/docker/ { print $7; exit 0 }')
 docker run \
   -v $HOME/electrumx_data:/data \
-  --ulimit nofile=262144:262144
-  -e DAEMON_URL=http://x:x@${HOST_IP}:64765 \
+  --ulimit nofile=262144:262144 \
+  -e DAEMON_URL=http://x:x@172.17.0.1:64765 \
+  -e BANDWIDTH_UNIT_COST=9999999999 \
+  -e COST_SOFT_LIMIT=50001 \
+  -e COST_HARD_LIMIT=50000 \
+  -e INITIAL_CONCURRENT=10000000 \
+  -e REQUEST_SLEEP=20 \
   -p 64767:64767 \
   cjd1/pkt-electrumx
 ```
