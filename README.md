@@ -36,14 +36,17 @@ docker run \
   -e INITIAL_CONCURRENT=10000000 \
   -e REQUEST_SLEEP=20 \
   -p 64767:64767 \
+  -e REPORT_SERVICES="ssl://yourdomain.example.com:64767" \
   cjd1/pkt-electrumx
 ```
-
-In this example, pktd RPC is exposed to the world with password `x`, this might allow griefters to overload your pktd instance with a large number of bogus requests. Either set a password or bind to a local IP address to prevent this.
 
 If there's an SSL certificate/key (`electrumx.crt`/`electrumx.key`) in the `/electrumx_data` volume it'll be used. If not, one will be generated for you.
 
 You can view all ElectrumX environment variables here: https://github.com/spesmilo/electrumx/blob/master/docs/environment.rst
+
+### Automatic discovery
+For hardcoded nodes to share your ElectrumX instance to Electrum clients, it is necessary to set the **REPORT_SERVICES** env variable with  
+the domain used to expose your node.
 
 ### Testing
 After your electrumx server has fully imported the blockchain, it will begin serving information to electrum
@@ -65,10 +68,6 @@ As a reminder, this test will not work until after electrumx has fully imported 
 ### TCP Port
 
 By default only the SSL port is exposed. You can expose the unencrypted TCP port with `-p 64766:64766`, although this is strongly discouraged.
-
-### WebSocket Port
-
-You can expose the WebSocket port with `-p 64719:64719`.
 
 ### RPC Port
 
