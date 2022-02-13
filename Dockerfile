@@ -1,20 +1,27 @@
 FROM python:3.9.10-alpine3.15
 LABEL maintainer="James P. Thomas <james@jamespthomas.com>"
-
+  
 COPY ./bin /usr/local/bin
 COPY ./VERSION /tmp
-
+                                                                                                      
+ARG BUILD_DEPS="git build-base linux-headers cmake"
+ARG DEPS="openssl leveldb-dev"
+ARG ROCKS_DEPS="bzip2-dev gflags-dev lz4-dev snappy-dev zlib-dev zstd-dev"
 RUN VERSION=$(cat /tmp/VERSION) && \
     chmod a+x /usr/local/bin/* && \
-    apk add --no-cache git build-base openssl && \
-    apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.15/main leveldb-dev && \
-    apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing rocksdb-dev && \
+    apk add --no-cache $BUILD_DEPS $DEPS $ROCKS_DEPS && \
+    git clone https://github.com/facebook/rocksdb && \
+    cd rocksdb && git checkout df4d3cf6fd52907f9a9a9bb62f124891787610eb && \
+    mkdir build && cd build && cmake .. && \
+    PORTABLE=1 make -j$(nproc) && \
+    make install && \
+    cd ../../ && \
     pip install aiohttp pylru plyvel websockets python-rocksdb && \
     git clone https://github.com/thomasjp0x42/electrumx.git && \
     cd electrumx && \
     git checkout $VERSION && \
     python setup.py install && \
-    apk del git build-base && \
+    apk del $BUILD_DEPS && \
     rm -rf /tmp/*
 
 VOLUME ["/data"]
